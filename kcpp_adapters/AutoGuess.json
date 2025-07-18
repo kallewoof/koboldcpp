@@ -24,14 +24,14 @@
         "tools_end": "\n</tools>\n\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\n<tool_call>\n{\"name\": <function-name>, \"arguments\": <args-json-object>}\n</tool_call><|im_end|>\n"
     }
 }, {
-    "search": ["<|im_start|>assistant<|im_middle|>", "<|im_assistant|>assistant<|im_middle|>", "<|im_end|>"],
+    "search": ["<|im_user|>user<|im_middle|>", "<|im_assistant|>assistant<|im_middle|>", "<|im_end|>"],
     "name": "ChatML (Kimi).",
     "adapter": {
-        "system_start": "<|im_start|>system<|im_middle|>",
+        "system_start": "<|im_system|>system<|im_middle|>",
         "system_end": "<|im_end|>",
-        "user_start": "<|im_start|>user<|im_middle|>",
+        "user_start": "<|im_user|>user<|im_middle|>",
         "user_end": "<|im_end|>",
-        "assistant_start": "<|im_start|>assistant<|im_middle|>",
+        "assistant_start": "<|im_assistant|>assistant<|im_middle|>",
         "assistant_end": "<|im_end|>"
     }
 }, {
