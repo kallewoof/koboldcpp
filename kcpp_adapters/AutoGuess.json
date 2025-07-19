@@ -189,7 +189,7 @@
         "assistant_end": "<|endofresponse|>\n"
     }
 }, {
-    "search": ["rwkv-world"],
+    "search": ["rwkv_"],
     "name": "RWKV World",
     "adapter": {
         "system_start": "",
