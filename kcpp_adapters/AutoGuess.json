@@ -108,7 +108,7 @@
         "system_end": "[/INST]",
         "user_start": "[INST] ",
         "user_end": "",
-        "assistant_start": "[/INST]",
+        "assistant_start": "[/INST] ",
         "assistant_end": "</s>"
     }
 }, {
@@ -137,12 +137,12 @@
     "search": ["'<|' + message['role'] + '|>'"],
     "name": "Phi 4 (mini)",
     "adapter": {
-        "system_start": "<|system|>\n",
-        "system_end": "<|end|>\n",
-        "user_start": "<|user|>\n",
-        "user_end": "<|end|>\n",
-        "assistant_start": "<|assistant|>\n",
-        "assistant_end": "<|end|>\n"
+        "system_start": "<|system|>",
+        "system_end": "<|end|>",
+        "user_start": "<|user|>",
+        "user_end": "<|end|>",
+        "assistant_start": "<|assistant|>",
+        "assistant_end": "<|end|>"
     }
 }, {
     "search": ["<|START_OF_TURN_TOKEN|>"],
@@ -170,23 +170,23 @@
     "search": ["<|bom|>","is_last_checked_defined"],
     "name": "Jamba",
     "adapter": {
-        "system_start": "<|bom|><|system|>",
+        "system_start": "<|bom|><|system|> ",
         "system_end": "<|eom|>",
-        "user_start": "<|bom|><|user|>",
+        "user_start": "<|bom|><|user|> ",
         "user_end": "<|eom|>",
-        "assistant_start": "<|bom|><|assistant|>",
+        "assistant_start": "<|bom|><|assistant|> ",
         "assistant_end": "<|eom|>"
     }
 }, {
     "search": ["<|userprompt|>", "<|endofuserprompt|>", "<|response|>", "<|endofresponse|>"],
     "name": "Dots",
     "adapter": {
-        "system_start": "<|system|>\n",
-        "system_end": "<|endofsystem|>\n",
-        "user_start": "<|userprompt|>\n",
-        "user_end": "<|endofuserprompt|>\n",
-        "assistant_start": "<|response|>\n",
-        "assistant_end": "<|endofresponse|>\n"
+        "system_start": "<|system|>",
+        "system_end": "<|endofsystem|>",
+        "user_start": "<|userprompt|>",
+        "user_end": "<|endofuserprompt|>",
+        "assistant_start": "<|response|>",
+        "assistant_end": "<|endofresponse|>"
     }
 }, {
     "search": ["rwkv_"],
@@ -194,10 +194,10 @@
     "adapter": {
         "system_start": "",
         "system_end": "\n\n",
-        "user_start": "USER: ",
-        "user_end": "\n",
-        "assistant_start": "ASSISTANT: ",
-        "assistant_end": "</s>\n"
+        "user_start": "User: ",
+        "user_end": "\n\n",
+        "assistant_start": "Assistant: ",
+        "assistant_end": "\n\n"
     }
 }, {
     "search": ["[/INST]"],
@@ -207,7 +207,7 @@
         "system_end": "[/INST]\n",
         "user_start": "[INST]",
         "user_end": "",
-        "assistant_start": "[/INST]\n",
+        "assistant_start": "[/INST]",
         "assistant_end": "</s>"
     }
 }, {
