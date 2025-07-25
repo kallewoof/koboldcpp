@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - concedo_experimental
+      - downstream
     paths:
       - 'kcpp_adapters/AutoGuess.json'
 
