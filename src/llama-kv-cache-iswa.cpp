@@ -145,7 +145,8 @@ llama_pos llama_kv_cache_iswa::seq_pos_min(llama_seq_id seq_id) const {
 }
 
 llama_pos llama_kv_cache_iswa::seq_pos_max(llama_seq_id seq_id) const {
-    return kv_swa->seq_pos_max(seq_id);
+    // the SWA cache can be empty while the base cache still holds the sequence (a seq_rm below the window)
+    return std::max(kv_base->seq_pos_max(seq_id), kv_swa->seq_pos_max(seq_id));
 }
 
 std::map<ggml_backend_buffer_type_t, size_t> llama_kv_cache_iswa::memory_breakdown() const {

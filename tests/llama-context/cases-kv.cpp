@@ -718,6 +718,62 @@ struct case_state_restore_fragmented : ctx_test {
     }
 };
 
+
+// after a seq_rm below the sliding window the SWA cache is empty but the base cache still holds the sequence:
+// seq_pos_max must answer for the whole sequence, or a batch with derived positions lands on top of its cells (#29045)
+struct case_iswa_seq_pos_max : ctx_test {
+    const char * name() const override { return "iswa-pos-max"; }
+    const char * description() const override {
+        return "seq_pos_max of an iSWA cache covers the base cache after a seq_rm below the sliding window";
+    }
+
+    case_result run(model_run & mr) const override {
+        const int32_t n_swa = llama_model_n_swa(mr.model);
+        if (n_swa == 0) {
+            TLOG_INF("%s: no sliding window, skipping\n", __func__);
+            return case_result::pass();
+        }
+
+        const int32_t n_keep = 16;        // cells that stay in the base cache
+        const int32_t n_fill = 3*n_swa;   // past the SWA cache's size, so its cells for position n_keep - 1 were reused
+
+        ctx_opts opts;
+        opts.n_ctx     = 2*n_fill;
+        opts.n_seq_max = 1;
+        auto ctx = mr.ctx(opts);
+        if (!ctx) {
+            return case_result::fail();
+        }
+        llama_memory_t mem = llama_get_memory(ctx.get());
+        if (mem == nullptr) {
+            return case_result::pass();
+        }
+
+        const int32_t n_vocab = llama_vocab_n_tokens(llama_model_get_vocab(mr.model));
+        const int32_t n_batch = (int32_t) mr.params.n_batch;
+        for (int32_t p = 0; p < n_fill; p += n_batch) {
+            if (!decode_gen(ctx.get(), n_vocab, 0, p, std::min(n_fill, p + n_batch))) {
+                TLOG_ERR("%s: decode failed at position %d\n", __func__, p);
+                return case_result::fail();
+            }
+        }
+        CTX_REQUIRE(llama_memory_seq_pos_max(mem, 0) == n_fill - 1, "unexpected position after the fill");
+
+        CTX_REQUIRE(llama_memory_seq_rm(mem, 0, n_keep, -1), "seq_rm failed");
+        const llama_pos pos_max = llama_memory_seq_pos_max(mem, 0);
+        TLOG_INF("%s: seq_pos_max after seq_rm(%d, -1): %d\n", __func__, n_keep, pos_max);
+        CTX_REQUIRE(pos_max == n_keep - 1, "seq_pos_max does not cover the base cache (" + std::to_string(pos_max) + ")");
+
+        // a batch without positions continues from seq_pos_max + 1
+        llama_token tok = gen_token(n_vocab, 0, n_keep);
+        llama_batch batch = llama_batch_get_one(&tok, 1);
+        CTX_REQUIRE(llama_decode(ctx.get(), batch) == 0, "decode with derived positions failed");
+        CTX_REQUIRE(llama_memory_seq_pos_max(mem, 0) == n_keep, "the derived position did not follow the base cache");
+
+        return case_result::pass();
+    }
+};
+
 std::vector<ctx_test_ptr> make_kv_cases() {
     std::vector<ctx_test_ptr> cases;
 
@@ -733,6 +789,7 @@ std::vector<ctx_test_ptr> make_kv_cases() {
     cases.push_back(std::make_unique<case_state_restore_failure>());
     cases.push_back(std::make_unique<case_state_rotation>());
     cases.push_back(std::make_unique<case_state_restore_fragmented>());
+    cases.push_back(std::make_unique<case_iswa_seq_pos_max>());
 
     return cases;
 }
